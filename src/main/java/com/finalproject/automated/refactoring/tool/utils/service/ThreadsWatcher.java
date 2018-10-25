@@ -1,5 +1,7 @@
 package com.finalproject.automated.refactoring.tool.utils.service;
 
+import lombok.NonNull;
+
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -11,5 +13,5 @@ import java.util.concurrent.Future;
 
 public interface ThreadsWatcher {
 
-    void waitAllThreadsDone(List<Future> futures, Integer waitingTime);
+    void waitAllThreadsDone(@NonNull List<Future> futures, @NonNull Integer waitingTime);
 }
