@@ -41,7 +41,8 @@ public class ThreadsWatcherImpl implements ThreadsWatcher {
         try {
             Thread.sleep(waitingTime);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            // Do nothing
+            // Mark of interrupted threads
         }
     }
 }
