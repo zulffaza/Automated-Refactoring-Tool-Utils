@@ -20,8 +20,9 @@ public class ThreadsWatcherImpl implements ThreadsWatcher {
         while (true) {
             Long finishedThreads = getFinishedThreadsCount(futures);
 
-            if (isAllFinished(finishedThreads, futures.size()))
+            if (isAllFinished(finishedThreads, futures.size())) {
                 break;
+            }
 
             waitForThreads(waitingTime);
         }
