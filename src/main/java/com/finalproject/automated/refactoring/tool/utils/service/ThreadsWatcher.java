@@ -13,5 +13,5 @@ import java.util.concurrent.Future;
 
 public interface ThreadsWatcher {
 
-    void waitAllThreadsDone(@NonNull List<Future> futures, @NonNull Integer waitingTime);
+    void waitAllThreadsDone(@NonNull List<Future> threads, @NonNull Integer waitingTime);
 }
