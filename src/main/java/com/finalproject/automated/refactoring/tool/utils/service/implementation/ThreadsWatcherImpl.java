@@ -16,11 +16,11 @@ import java.util.concurrent.Future;
 public class ThreadsWatcherImpl implements ThreadsWatcher {
 
     @Override
-    public void waitAllThreadsDone(List<Future> futures, Integer waitingTime) {
+    public void waitAllThreadsDone(List<Future> threads, Integer waitingTime) {
         while (true) {
-            Long finishedThreads = getFinishedThreadsCount(futures);
+            Long finishedThreads = countFinishedThreads(threads);
 
-            if (isAllFinished(finishedThreads, futures.size())) {
+            if (isAllFinished(finishedThreads, threads.size())) {
                 break;
             }
 
@@ -28,10 +28,14 @@ public class ThreadsWatcherImpl implements ThreadsWatcher {
         }
     }
 
-    private Long getFinishedThreadsCount(List<Future> futures) {
+    private Long countFinishedThreads(List<Future> futures) {
         return futures.stream()
-                .filter(Future::isDone)
+                .filter(this::isFinished)
                 .count();
+    }
+
+    private Boolean isFinished(Future thread) {
+        return thread == null || thread.isDone();
     }
 
     private Boolean isAllFinished(Long finishedThreads, Integer numberOfThreads) {
