@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
@@ -117,7 +116,7 @@ public class VariableHelperImpl implements VariableHelper {
 
     private Stream<String> splitMethodParameters(String variable) {
         List<String> split = Arrays.asList(variable.split(WHITESPACE_REGEX));
-        split = createNewListIfSplitEmpty(split, variable);
+        split = removeEmptyString(split);
 
         removeCastingType(split);
         removeStaticClass(split);
@@ -125,11 +124,7 @@ public class VariableHelperImpl implements VariableHelper {
         return split.stream();
     }
 
-    private List<String> createNewListIfSplitEmpty(List<String> split, String variable) {
-        if (split.isEmpty()) {
-            split = Collections.singletonList(variable);
-        }
-
+    private List<String> removeEmptyString(List<String> split) {
         split = new ArrayList<>(split);
         split.removeIf(String::isEmpty);
 
@@ -200,17 +195,7 @@ public class VariableHelperImpl implements VariableHelper {
     }
 
     private void normalizeCalledMethod(List<String> split) {
-        Integer endIndex;
-
-        for (endIndex = SECOND_INDEX; endIndex < split.size(); endIndex++) {
-            String variable = split.get(endIndex);
-
-            if (!variable.startsWith(POINT)) {
-                break;
-            }
-        }
-
-        List<String> removeElements = split.subList(SECOND_INDEX, endIndex);
+        List<String> removeElements = split.subList(SECOND_INDEX, split.size());
 
         split.set(FIRST_INDEX, split.get(FIRST_INDEX)
                 .replaceAll(Pattern.quote(POINT), EMPTY_STRING));
@@ -387,7 +372,7 @@ public class VariableHelperImpl implements VariableHelper {
 
     private Stream<String> splitArrayVariables(String variable) {
         List<String> split = Arrays.asList(variable.split(Pattern.quote(OPEN_SQUARE_BRACKETS)));
-        split = createNewListIfSplitEmpty(split, variable);
+        split = removeEmptyString(split);
 
         if (split.size() > SINGLE_LIST_SIZE) {
             customizeArrayVariables(split);

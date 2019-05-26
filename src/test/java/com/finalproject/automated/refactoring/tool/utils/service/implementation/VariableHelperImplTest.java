@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -37,16 +37,6 @@ public class VariableHelperImplTest {
 
     private static final String SPACE_DELIMITER = " ";
     private static final String EMPTY_STRING = "";
-
-    /*
-        TODO whitespace split empty
-        TODO casting type
-        TODO called field then parameters
-        TODO escape in string
-        TODO generics constructors
-        TODO multiple generics
-        TODO create new array variables
-     */
 
     @Before
     public void setUp() {
@@ -102,6 +92,26 @@ public class VariableHelperImplTest {
         variableHelper.readVariable(null);
     }
 
+    @Test
+    public void isClassName_success() {
+        assertTrue(variableHelper.isClassName("Student"));
+    }
+
+    @Test
+    public void isClassName_success_constVariable() {
+        assertFalse(variableHelper.isClassName("STUDENT_NAME"));
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void isClassName_failed_variableEmpty() {
+        variableHelper.isClassName("");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void isClassName_failed_variableIsNull() {
+        variableHelper.isClassName(null);
+    }
+
     private void mockingNormalizeForStatement() {
         doAnswer(this::mockNormalizeStringStatement)
                 .when(mergeListHelper)
@@ -122,7 +132,7 @@ public class VariableHelperImplTest {
 
         doAnswer(this::mockNormalizeGenericsGenericsStatement)
                 .when(mergeListHelper)
-                .mergeListOfString(eq(createGenericsStatementList()),
+                .mergeListOfString(eq(createBeautyGenericsStatementList()),
                         eq(createGenericsStatementMergeIndex()), eq(EMPTY_STRING));
     }
 
@@ -163,50 +173,48 @@ public class VariableHelperImplTest {
     }
 
     private String createStatement() {
-        return "return \"List<String> variables = Arrays.asList(statement.split(WHITESPACE_REGEX));\";";
+        return "return \"List<String> variables = Arrays.asList(statement.split(\"\\\\s\"));\";";
     }
 
     private String createGenericsStatement() {
-        return "List<String> variables = Arrays.asList(statement.split(WHITESPACE_REGEX));";
+        return "Map<Integer, List<String>> students = new HashMap<>();";
     }
 
     private String createInnerClassStatement() {
-        return "Sort.Direction direction = Sort.Direction.values()[sortIndexResponse.getSortDirectionIndex()];";
+        return "Sort.Direction[] direction = new Sort.Direction[directionSize];";
     }
 
     private String createMethodReferenceStatement() {
-        return "variables = variables.stream().flatMap(this::removeUnusedCharacter).collect(Collectors.toList());";
+        return "variables = (ArrayList) variables.stream().flatMap(this::removeUnusedCharacter).collect(Collectors.toList());";
     }
 
     private List<String> createStatementList() {
         List<String> statementList = Arrays.asList(
                 "return", "\"List", "<", "String", ">", "variables", "=",
-                ".Arrays", ".asList(", "statement", ".split(", "WHITESPACE_REGEX", ")", ")", "\""
+                ".Arrays", ".asList(", "statement", ".split(", "\"\\\\s\"", ")", ")", "\""
         );
         return new ArrayList<>(statementList);
     }
 
     private List<String> createGenericsStatementList() {
         List<String> genericsStatementList = Arrays.asList(
-                "List", "<", "String", ">", "variables", "=",
-                ".Arrays", ".asList(", "statement", ".split(", "WHITESPACE_REGEX",
-                ")", ")"
+                "Map", "<", "Integer", "List", "<", "String", ">>", "students", "=",
+                "new", "HashMap", "<>", "(", ")"
         );
         return new ArrayList<>(genericsStatementList);
     }
 
     private List<String> createInnerClassStatementList() {
         List<String> innerClassStatementList = Arrays.asList(
-                "Sort.Direction", "direction", "=",
-                ".Sort", ".Direction", ".values(", ")",
-                "[sortIndexResponse", ".getSortDirectionIndex(", ")", "]"
+                "Sort.Direction[]", "direction", "=", "new",
+                "Sort.Direction[directionSize]"
         );
         return new ArrayList<>(innerClassStatementList);
     }
 
     private List<String> createMethodReferenceStatementList() {
         List<String> methodReferenceStatementList = Arrays.asList(
-                "variables", "=", "variables", ".stream(", ")",
+                "variables", "=", "(", ")", "variables", ".stream(", ")",
                 ".flatMap(", "this", ".removeUnusedCharacter(", ")",
                 ".collect(", ".Collectors", ".toList(", ")", ")"
         );
@@ -237,38 +245,44 @@ public class VariableHelperImplTest {
     }
 
     private List<Integer> createGenericsStatementMergeIndex() {
-        List<Integer> genericsStatementMergeIndex = Arrays.asList(0, 3);
+        List<Integer> genericsStatementMergeIndex = Arrays.asList(0, 6, 10, 12);
         return new ArrayList<>(genericsStatementMergeIndex);
     }
 
     private List<String> createExpectedStatementList() {
         List<String> statementList = Arrays.asList(
                 "return",
-                "\"List < String > variables = .Arrays .asList( statement .split( WHITESPACE_REGEX ) ) \""
+                "\"List < String > variables = .Arrays .asList( statement .split( \"\\\\s\" ) ) \""
         );
         return new ArrayList<>(statementList);
     }
 
+    private List<String> createBeautyGenericsStatementList() {
+        List<String> genericsStatementList = Arrays.asList(
+                "Map", "<", "Integer, ", "List", "<", "String", ">>", "students", "=",
+                "new", "HashMap", "<>", "(", ")"
+        );
+        return new ArrayList<>(genericsStatementList);
+    }
+
     private List<String> createExpectedGenericsStatementList() {
         List<String> genericsStatementList = Arrays.asList(
-                "List<String>", "variables", "=",
-                ".Arrays", ".asList(", "statement", ".split(", "WHITESPACE_REGEX",
-                ")", ")"
+                "Map<Integer, List<String>>", "students", "=",
+                "new", "HashMap<>(", ")"
         );
         return new ArrayList<>(genericsStatementList);
     }
 
     private List<String> createExpectedGenericsStatementVariables() {
         List<String> genericsStatementVariables = Arrays.asList(
-                "List<String>", "variables", "=",
-                "statement", "WHITESPACE_REGEX"
+                "Map<Integer, List<String>>", "students", "="
         );
         return new ArrayList<>(genericsStatementVariables);
     }
 
     private List<String> createExpectedInnerClassStatementVariables() {
         List<String> innerClassStatementVariables = Arrays.asList(
-                "Sort.Direction", "direction", "=", "sortIndexResponse"
+                "Sort.Direction[]", "direction", "=", "directionSize"
         );
         return new ArrayList<>(innerClassStatementVariables);
     }
