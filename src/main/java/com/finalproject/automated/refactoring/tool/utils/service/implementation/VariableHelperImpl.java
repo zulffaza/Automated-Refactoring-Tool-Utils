@@ -164,9 +164,8 @@ public class VariableHelperImpl implements VariableHelper {
             checkIfCallMethod(variable, isCallMethod);
         }
 
-        if (isNeedNormalization(split, isCallMethod)) {
-            normalizeCalledMethod(split);
-        }
+        normalizeCalledMethod(split, isCallMethod);
+        normalizeKeywordsCalledMethod(split);
     }
 
     private Boolean isStaticMethodCalls(String variable, String nextVariable) {
@@ -183,6 +182,12 @@ public class VariableHelperImpl implements VariableHelper {
         }
     }
 
+    private void normalizeCalledMethod(List<String> split, AtomicBoolean isCallMethod) {
+        if (isNeedNormalization(split, isCallMethod)) {
+            doNormalizeCalledMethod(split);
+        }
+    }
+
     private Boolean isNeedNormalization(List<String> split, AtomicBoolean isCallMethod) {
         boolean isCallField = split.stream()
                 .anyMatch(this::isCalledField);
@@ -194,13 +199,44 @@ public class VariableHelperImpl implements VariableHelper {
         return variable.contains(POINT);
     }
 
-    private void normalizeCalledMethod(List<String> split) {
+    private void doNormalizeCalledMethod(List<String> split) {
         List<String> removeElements = split.subList(SECOND_INDEX, split.size());
 
         split.set(FIRST_INDEX, split.get(FIRST_INDEX)
                 .replaceAll(Pattern.quote(POINT), EMPTY_STRING));
         split.set(FIRST_INDEX, split.get(FIRST_INDEX) + String.join(EMPTY_STRING, removeElements));
         split.removeAll(removeElements);
+    }
+
+    private void normalizeKeywordsCalledMethod(List<String> split) {
+        if (split.size() > SINGLE_LIST_SIZE) {
+            doNormalizeKeywordsCalledMethod(split);
+        }
+    }
+
+    private void doNormalizeKeywordsCalledMethod(List<String> split) {
+        List<Integer> mergeIndex = new ArrayList<>();
+        Integer maxSize = split.size() - SINGLE_LIST_SIZE;
+
+        for (Integer index = FIRST_INDEX; index < maxSize; index++) {
+            if (isKeywordsCalledMethod(index, split)) {
+                saveIndexAndNextIndex(index, mergeIndex);
+            }
+        }
+
+        mergeListHelper.mergeListOfString(split, mergeIndex, EMPTY_STRING);
+    }
+
+    private Boolean isKeywordsCalledMethod(Integer index, List<String> split) {
+        String variable = split.get(index);
+        String nextVariable = split.get(++index);
+
+        return KEYWORDS.contains(variable) && nextVariable.contains(POINT);
+    }
+
+    private void saveIndexAndNextIndex(Integer index, List<Integer> mergeIndex) {
+        mergeIndex.add(index);
+        mergeIndex.add(++index);
     }
 
     private void normalizeString(List<String> variables) {

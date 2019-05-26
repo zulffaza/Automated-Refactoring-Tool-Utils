@@ -149,6 +149,11 @@ public class VariableHelperImplTest {
     }
 
     private void mockingNormalizeForMethodReferenceStatement() {
+        doAnswer(this::mockNormalizeKeywordsCalledMethodMethodReferenceStatement)
+                .when(mergeListHelper)
+                .mergeListOfString(eq(createNormalizeKeywordsCalledMethodMethodReferenceStatementList()),
+                        eq(createMethodReferenceStatementMergeIndex()), eq(EMPTY_STRING));
+
         doNothing()
                 .when(mergeListHelper)
                 .mergeListOfString(eq(createMethodReferenceStatementList()),
@@ -185,7 +190,7 @@ public class VariableHelperImplTest {
     }
 
     private String createMethodReferenceStatement() {
-        return "variables = (ArrayList) variables.stream().flatMap(this::removeUnusedCharacter).collect(Collectors.toList());";
+        return "variables = (ArrayList) this.variables.stream().flatMap(this::removeUnusedCharacter).collect(Collectors.toList());";
     }
 
     private List<String> createStatementList() {
@@ -214,7 +219,16 @@ public class VariableHelperImplTest {
 
     private List<String> createMethodReferenceStatementList() {
         List<String> methodReferenceStatementList = Arrays.asList(
-                "variables", "=", "(", ")", "variables", ".stream(", ")",
+                "variables", "=", "(", ")", "this.variables", ".stream(", ")",
+                ".flatMap(", "this.removeUnusedCharacter(", ")",
+                ".collect(", ".Collectors", ".toList(", ")", ")"
+        );
+        return new ArrayList<>(methodReferenceStatementList);
+    }
+
+    private List<String> createNormalizeKeywordsCalledMethodMethodReferenceStatementList() {
+        List<String> methodReferenceStatementList = Arrays.asList(
+                "this", ".variables", ".stream(", ")",
                 ".flatMap(", "this", ".removeUnusedCharacter(", ")",
                 ".collect(", ".Collectors", ".toList(", ")", ")"
         );
@@ -239,6 +253,15 @@ public class VariableHelperImplTest {
         return null;
     }
 
+    private Object mockNormalizeKeywordsCalledMethodMethodReferenceStatement(InvocationOnMock invocationOnMock) {
+        List<String> genericsStatementList = invocationOnMock.getArgument(0);
+
+        genericsStatementList.clear();
+        genericsStatementList.addAll(createNormalizeKeywordsCalledMethodExpectedMethodReferenceStatementList());
+
+        return null;
+    }
+
     private List<Integer> createStatementMergeIndex() {
         List<Integer> statementMergeIndex = Arrays.asList(1, 14);
         return new ArrayList<>(statementMergeIndex);
@@ -247,6 +270,11 @@ public class VariableHelperImplTest {
     private List<Integer> createGenericsStatementMergeIndex() {
         List<Integer> genericsStatementMergeIndex = Arrays.asList(0, 6, 10, 12);
         return new ArrayList<>(genericsStatementMergeIndex);
+    }
+
+    private List<Integer> createMethodReferenceStatementMergeIndex() {
+        List<Integer> methodReferenceStatementMergeIndex = Arrays.asList(0, 1, 5, 6);
+        return new ArrayList<>(methodReferenceStatementMergeIndex);
     }
 
     private List<String> createExpectedStatementList() {
@@ -273,6 +301,15 @@ public class VariableHelperImplTest {
         return new ArrayList<>(genericsStatementList);
     }
 
+    private List<String> createNormalizeKeywordsCalledMethodExpectedMethodReferenceStatementList() {
+        List<String> methodReferenceStatementList = Arrays.asList(
+                "this.variables", ".stream(", ")",
+                ".flatMap(", "this.removeUnusedCharacter(", ")",
+                ".collect(", ".Collectors", ".toList(", ")", ")"
+        );
+        return new ArrayList<>(methodReferenceStatementList);
+    }
+
     private List<String> createExpectedGenericsStatementVariables() {
         List<String> genericsStatementVariables = Arrays.asList(
                 "Map<Integer, List<String>>", "students", "="
@@ -289,7 +326,7 @@ public class VariableHelperImplTest {
 
     private List<String> createExpectedMethodReferenceStatementVariables() {
         List<String> methodReferenceStatementVariables = Arrays.asList(
-                "variables", "=", "variables"
+                "variables", "=", "this.variables"
         );
         return new ArrayList<>(methodReferenceStatementVariables);
     }
@@ -297,8 +334,8 @@ public class VariableHelperImplTest {
     private void verifyNormalizeForStatement() {
         verify(mergeListHelper).mergeListOfString(eq(createExpectedStatementList()),
                 eq(createStatementMergeIndex()), eq(SPACE_DELIMITER));
-        verify(mergeListHelper).mergeListOfString(eq(createExpectedStatementList()),
-                eq(new ArrayList<>()), eq(EMPTY_STRING));
+        verify(mergeListHelper, times(3))
+                .mergeListOfString(anyList(), eq(new ArrayList<>()), eq(EMPTY_STRING));
         verifyNoMoreInteractions(mergeListHelper);
     }
 
@@ -307,6 +344,8 @@ public class VariableHelperImplTest {
                 eq(new ArrayList<>()), eq(SPACE_DELIMITER));
         verify(mergeListHelper).mergeListOfString(eq(createExpectedGenericsStatementList()),
                 eq(createGenericsStatementMergeIndex()), eq(EMPTY_STRING));
+        verify(mergeListHelper, times(3))
+                .mergeListOfString(anyList(), eq(new ArrayList<>()), eq(EMPTY_STRING));
         verifyNoMoreInteractions(mergeListHelper);
     }
 
@@ -319,10 +358,13 @@ public class VariableHelperImplTest {
     }
 
     private void verifyNormalizeForMethodReferenceStatement() {
+        verify(mergeListHelper, times(2))
+                .mergeListOfString(anyList(), eq(new ArrayList<>()), eq(EMPTY_STRING));
+        verify(mergeListHelper).mergeListOfString(
+                eq(createNormalizeKeywordsCalledMethodExpectedMethodReferenceStatementList()),
+                eq(createMethodReferenceStatementMergeIndex()), eq(EMPTY_STRING));
         verify(mergeListHelper).mergeListOfString(eq(createMethodReferenceStatementList()),
                 eq(new ArrayList<>()), eq(SPACE_DELIMITER));
-        verify(mergeListHelper).mergeListOfString(eq(createMethodReferenceStatementList()),
-                eq(new ArrayList<>()), eq(EMPTY_STRING));
         verifyNoMoreInteractions(mergeListHelper);
     }
 
