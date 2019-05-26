@@ -231,7 +231,7 @@ public class VariableHelperImpl implements VariableHelper {
         String variable = split.get(index);
         String nextVariable = split.get(++index);
 
-        return KEYWORDS.contains(variable) && nextVariable.contains(POINT);
+        return KEYWORDS.contains(variable) && nextVariable.startsWith(POINT);
     }
 
     private void saveIndexAndNextIndex(Integer index, List<Integer> mergeIndex) {
