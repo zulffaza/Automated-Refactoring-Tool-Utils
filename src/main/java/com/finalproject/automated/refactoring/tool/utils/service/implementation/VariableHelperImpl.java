@@ -190,13 +190,14 @@ public class VariableHelperImpl implements VariableHelper {
 
     private Boolean isNeedNormalization(List<String> split, AtomicBoolean isCallMethod) {
         boolean isCallField = split.stream()
-                .anyMatch(this::isCalledField);
+                .allMatch(this::isCalledField);
 
-        return isCallField && !isCallMethod.get();
+        return !split.isEmpty() && isCallField && !isCallMethod.get();
     }
 
     private Boolean isCalledField(String variable) {
-        return variable.contains(POINT);
+        String replacePoint = variable.replace(POINT, EMPTY_STRING);
+        return variable.contains(POINT) && isClassName(replacePoint);
     }
 
     private void doNormalizeCalledMethod(List<String> split) {
