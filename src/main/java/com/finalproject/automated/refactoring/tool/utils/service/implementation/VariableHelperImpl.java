@@ -342,7 +342,7 @@ public class VariableHelperImpl implements VariableHelper {
     }
 
     private Boolean isOpeningGenerics(NormalizeGenericsVA normalizeGenericsVA) {
-        return isClassName(normalizeGenericsVA.getVariable()) &&
+        return (isClassName(normalizeGenericsVA.getVariable()) || normalizeGenericsVA.getVariable().equals(POINT)) &&
                 normalizeGenericsVA.getNextVariable().contains(LESS_THAN) &&
                 normalizeGenericsVA.getStack().isEmpty() &&
                 !normalizeGenericsVA.getIsGenerics().get();
