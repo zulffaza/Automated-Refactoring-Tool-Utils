@@ -178,11 +178,15 @@ public class VariableHelperImplTest {
     }
 
     private String createStatement() {
-        return "return \"List<String> variables = Arrays.asList(statement.split(\"\\\\s\"));\";";
+        return "// Return string of array list of string declarations\n" +
+                "return \"List<String> variables = Arrays.asList(statement.split(\"\\\\s\"));\";";
     }
 
     private String createGenericsStatement() {
-        return "Map<Integer, List<String>> students = new HashMap<>();";
+        return "/*\n" +
+                "   Declarations of students hash map\n" +
+                "*/\n" +
+                "Map<Integer, List<String>> students = new HashMap<>();";
     }
 
     private String createInnerClassStatement() {

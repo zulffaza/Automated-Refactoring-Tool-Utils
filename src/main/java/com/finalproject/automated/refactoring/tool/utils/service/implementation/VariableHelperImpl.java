@@ -30,6 +30,8 @@ public class VariableHelperImpl implements VariableHelper {
 
     private static final Character UNDERSCORE_CHARACTER = '_';
 
+    private static final String ONE_LINE_COMMENT_REGEX = "(?://)+(?:[ \\t\\S])*";
+    private static final String MULTI_LINE_COMMENT_REGEX = "(?:/\\*)+(?:[\\s\\S])*(?:\\*/)+";
     private static final String WHITESPACE_REGEX = "\\s";
     private static final String SPACE_DELIMITER = " ";
     private static final String ESCAPE = "\\";
@@ -53,10 +55,19 @@ public class VariableHelperImpl implements VariableHelper {
 
     @Override
     public List<String> readVariable(@NonNull String statement) {
+        statement = removeComments(statement);
+
         List<String> variables = Arrays.asList(statement.split(WHITESPACE_REGEX));
         variables = new ArrayList<>(variables);
 
         return doReadVariable(variables);
+    }
+
+    private String removeComments(String statement) {
+        statement = statement.replaceAll(ONE_LINE_COMMENT_REGEX, EMPTY_STRING);
+        statement = statement.replaceAll(MULTI_LINE_COMMENT_REGEX, EMPTY_STRING);
+
+        return statement;
     }
 
     private List<String> doReadVariable(List<String> variables) {
@@ -330,17 +341,17 @@ public class VariableHelperImpl implements VariableHelper {
         }
     }
 
-    private void saveOpeningGenericsIndex(Integer index,
-                                          NormalizeGenericsVA normalizeGenericsVA) {
-        normalizeGenericsVA.getIsGenerics().set(Boolean.TRUE);
-        normalizeGenericsVA.getMergeIndex().add(index);
-    }
-
     private Boolean isOpeningGenerics(NormalizeGenericsVA normalizeGenericsVA) {
         return isClassName(normalizeGenericsVA.getVariable()) &&
                 normalizeGenericsVA.getNextVariable().contains(LESS_THAN) &&
                 normalizeGenericsVA.getStack().isEmpty() &&
                 !normalizeGenericsVA.getIsGenerics().get();
+    }
+
+    private void saveOpeningGenericsIndex(Integer index,
+                                          NormalizeGenericsVA normalizeGenericsVA) {
+        normalizeGenericsVA.getIsGenerics().set(Boolean.TRUE);
+        normalizeGenericsVA.getMergeIndex().add(index);
     }
 
     private void normalizeClosingGenerics(Integer index,
