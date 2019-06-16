@@ -208,7 +208,7 @@ public class VariableHelperImpl implements VariableHelper {
 
     private Boolean isCalledField(String variable) {
         String replacePoint = variable.replace(POINT, EMPTY_STRING);
-        return variable.contains(POINT) && isClassName(replacePoint);
+        return variable.contains(POINT) && !replacePoint.isEmpty() && isClassName(replacePoint);
     }
 
     private void doNormalizeCalledMethod(List<String> split) {
