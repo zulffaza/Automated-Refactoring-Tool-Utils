@@ -33,6 +33,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.final-project.automated-refactoring-tool</groupId>
+            <artifactId>model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
@@ -42,6 +47,17 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>Automated-Refactoring-Tool-Model</id>
+            <url>https://raw.github.com/zulffaza/Automated-Refactoring-Tool-Model/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
