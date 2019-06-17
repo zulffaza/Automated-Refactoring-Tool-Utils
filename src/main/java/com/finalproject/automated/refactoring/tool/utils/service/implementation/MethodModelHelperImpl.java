@@ -7,6 +7,7 @@ import com.finalproject.automated.refactoring.tool.utils.service.MethodModelHelp
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -31,11 +32,36 @@ public class MethodModelHelperImpl implements MethodModelHelper {
     private static final String TAB = "\t";
     private static final String WHITESPACE_REGEX = "(?:\\s)*";
     private static final String PLUS = "+";
+    private static final String MINUS = "-";
+    private static final String MULTIPLY = "*";
     private static final String OR = "|";
+    private static final String POINT = ".";
+    private static final String POW_SIGN = "^";
+    private static final String DOLLAR_SIGN = "$";
+    private static final String OPEN_SQUARE_BRACKETS = "[";
+    private static final String CLOSE_SQUARE_BRACKETS = "]";
+    private static final String QUESTION_MARK = "?";
     private static final String REGEX_ESCAPE = "\\\\";
 
     private static final Integer FIRST_INDEX = 0;
     private static final Integer ONE = 1;
+
+    private static final List<String> REGEX_KEYWORDS = Arrays.asList(
+            OPEN_PARENTHESES,
+            CLOSE_PARENTHESES,
+            PLUS,
+            MINUS,
+            MULTIPLY,
+            OR,
+            POINT,
+            POW_SIGN,
+            DOLLAR_SIGN,
+            OPEN_CURLY_BRACKETS,
+            CLOSE_CURLY_BRACKETS,
+            OPEN_SQUARE_BRACKETS,
+            CLOSE_SQUARE_BRACKETS,
+            QUESTION_MARK
+    );
 
     @Override
     public String createMethod(@NonNull MethodModel methodModel) {
@@ -231,8 +257,9 @@ public class MethodModelHelperImpl implements MethodModelHelper {
 
         appendString(exception, createMethodStringVA.getIsRegex(), createMethodStringVA.getProperty());
 
-        if (!createMethodStringVA.getIndex().equals(createMethodStringVA.getMaxSize()))
-            exception.append(COMMA);
+        if (!createMethodStringVA.getIndex().equals(createMethodStringVA.getMaxSize())) {
+            appendString(exception, createMethodStringVA.getIsRegex(), COMMA);
+        }
 
         if (!createMethodStringVA.getIsRegex())
             exception.append(SPACE);
@@ -258,11 +285,13 @@ public class MethodModelHelperImpl implements MethodModelHelper {
     }
 
     private String replaceRegexKeywords(String string) {
-        string = string.replaceAll(Pattern.quote(OPEN_PARENTHESES), REGEX_ESCAPE + OPEN_PARENTHESES);
-        string = string.replaceAll(Pattern.quote(CLOSE_PARENTHESES), REGEX_ESCAPE + CLOSE_PARENTHESES);
-        string = string.replaceAll(Pattern.quote(PLUS), REGEX_ESCAPE + PLUS);
-        string = string.replaceAll(Pattern.quote(OR), REGEX_ESCAPE + OR);
+        for (String keyword : REGEX_KEYWORDS)
+            string = replaceRegexKeyword(string, keyword);
 
         return string;
+    }
+
+    private String replaceRegexKeyword(String string, String regexKeyword) {
+        return string.replaceAll(Pattern.quote(regexKeyword), REGEX_ESCAPE + regexKeyword);
     }
 }
