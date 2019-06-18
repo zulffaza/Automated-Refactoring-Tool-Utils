@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -30,7 +31,8 @@ public class MethodModelHelperImpl implements MethodModelHelper {
     private static final String OPEN_CURLY_BRACKETS = "{";
     private static final String CLOSE_CURLY_BRACKETS = "}";
     private static final String TAB = "\t";
-    private static final String WHITESPACE_REGEX = "(?:\\s)*";
+    private static final String OPTIONAL_WHITESPACE_REGEX = "(?:\\s)*";
+    private static final String REQUIRED_WHITESPACE_REGEX = "(?:\\s)+";
     private static final String PLUS = "+";
     private static final String MINUS = "-";
     private static final String MULTIPLY = "*";
@@ -41,7 +43,7 @@ public class MethodModelHelperImpl implements MethodModelHelper {
     private static final String OPEN_SQUARE_BRACKETS = "[";
     private static final String CLOSE_SQUARE_BRACKETS = "]";
     private static final String QUESTION_MARK = "?";
-    private static final String REGEX_ESCAPE = "\\\\";
+    private static final String ESCAPE = "\\";
 
     private static final Integer FIRST_INDEX = 0;
     private static final Integer ONE = 1;
@@ -87,7 +89,7 @@ public class MethodModelHelperImpl implements MethodModelHelper {
         buildMethodReturnType(methodModel, method, Boolean.TRUE);
 
         method.append(methodModel.getName());
-        method.append(WHITESPACE_REGEX);
+        method.append(OPTIONAL_WHITESPACE_REGEX);
 
         buildMethodParameters(methodModel, method, Boolean.TRUE);
         buildMethodExceptions(methodModel, method, Boolean.TRUE);
@@ -116,18 +118,29 @@ public class MethodModelHelperImpl implements MethodModelHelper {
         String keyword = createMethodStringVA.getProperty();
 
         if (createMethodStringVA.getIsRegex())
-            keyword = createRegexString(keyword);
+            keyword = createRegexWithoutWhitespace(keyword);
         else
             keyword = createNonRegexMethodKeyword(createMethodStringVA);
 
         return keyword;
     }
 
-    private String createRegexString(String keyword) {
-        keyword = replaceRegexKeywords(keyword);
-        keyword += WHITESPACE_REGEX;
+    private String createRegexWithoutWhitespace(String keyword) {
+        keyword = createRegexString(keyword);
+        keyword = replaceWhitespace(keyword);
 
         return keyword;
+    }
+
+    private String createRegexString(String keyword) {
+        keyword = replaceRegexKeywords(keyword);
+        keyword += OPTIONAL_WHITESPACE_REGEX;
+
+        return keyword;
+    }
+
+    private String replaceWhitespace(String string) {
+        return string.replaceAll(REQUIRED_WHITESPACE_REGEX, Matcher.quoteReplacement(OPTIONAL_WHITESPACE_REGEX));
     }
 
     private String createNonRegexMethodKeyword(CreateMethodStringVA<String> createMethodStringVA) {
@@ -151,7 +164,7 @@ public class MethodModelHelperImpl implements MethodModelHelper {
         String returnType = methodModel.getReturnType();
 
         if (isRegex)
-            returnType = createRegexString(returnType);
+            returnType = createRegexWithoutWhitespace(returnType);
         else
             returnType += SPACE;
 
@@ -292,6 +305,7 @@ public class MethodModelHelperImpl implements MethodModelHelper {
     }
 
     private String replaceRegexKeyword(String string, String regexKeyword) {
-        return string.replaceAll(Pattern.quote(regexKeyword), REGEX_ESCAPE + regexKeyword);
+        String replacement = ESCAPE + regexKeyword;
+        return string.replaceAll(Pattern.quote(regexKeyword), Matcher.quoteReplacement(replacement));
     }
 }

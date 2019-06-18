@@ -6,18 +6,16 @@ import lombok.Getter;
 /**
  * @author Faza Zulfika P P
  * @version 1.0.0
- * @since 16 June 2019
+ * @since 17 June 2019
  */
 
 @Getter
 @Builder
-public class CreateMethodStringVA<T> {
+public class ReplaceFileVA {
 
-    private T property;
+    private String filePath;
 
-    private Integer index;
+    private String target;
 
-    private Integer maxSize;
-
-    private Boolean isRegex;
+    private String replacement;
 }
