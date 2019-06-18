@@ -1,7 +1,7 @@
 package com.finalproject.automated.refactoring.tool.utils.model.request;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 /**
  * @author Faza Zulfika P P
@@ -9,7 +9,7 @@ import lombok.Data;
  * @since 17 June 2019
  */
 
-@Data
+@Getter
 @Builder
 public class ReplaceFileVA {
 
