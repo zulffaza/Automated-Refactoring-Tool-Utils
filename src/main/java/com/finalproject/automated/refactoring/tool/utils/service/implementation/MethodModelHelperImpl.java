@@ -117,10 +117,11 @@ public class MethodModelHelperImpl implements MethodModelHelper {
     private String createMethodKeyword(CreateMethodStringVA<String> createMethodStringVA) {
         String keyword = createMethodStringVA.getProperty();
 
-        if (createMethodStringVA.getIsRegex())
+        if (createMethodStringVA.getIsRegex()) {
             keyword = createRegexWithoutWhitespace(keyword);
-        else
+        } else {
             keyword = createNonRegexMethodKeyword(createMethodStringVA);
+        }
 
         return keyword;
     }
@@ -146,27 +147,30 @@ public class MethodModelHelperImpl implements MethodModelHelper {
     private String createNonRegexMethodKeyword(CreateMethodStringVA<String> createMethodStringVA) {
         String keyword = createMethodStringVA.getProperty();
 
-        if (!createMethodStringVA.getIndex().equals(createMethodStringVA.getMaxSize()))
+        if (!createMethodStringVA.getIndex().equals(createMethodStringVA.getMaxSize())) {
             keyword += ENTER;
-        else
+        } else {
             keyword += SPACE;
+        }
 
         return keyword;
     }
 
     private void buildMethodReturnType(MethodModel methodModel, StringBuilder method,
                                        Boolean isRegex) {
-        if (isHasReturnType(methodModel))
+        if (isHasReturnType(methodModel)) {
             method.append(createMethodReturnType(methodModel, isRegex));
+        }
     }
 
     private String createMethodReturnType(MethodModel methodModel, Boolean isRegex) {
         String returnType = methodModel.getReturnType();
 
-        if (isRegex)
+        if (isRegex) {
             returnType = createRegexWithoutWhitespace(returnType);
-        else
+        } else {
             returnType += SPACE;
+        }
 
         return returnType;
     }
@@ -195,15 +199,17 @@ public class MethodModelHelperImpl implements MethodModelHelper {
 
         appendString(method, isRegex, CLOSE_PARENTHESES);
 
-        if (!isRegex)
+        if (!isRegex) {
             method.append(SPACE);
+        }
     }
 
     private void appendString(StringBuilder method, Boolean isRegex, String string) {
-        if (isRegex)
+        if (isRegex) {
             method.append(createRegexWithoutWhitespace(string));
-        else
+        } else {
             method.append(string);
+        }
     }
 
     private String createMethodParameter(CreateMethodStringVA<PropertyModel> createMethodStringVA) {
@@ -213,13 +219,15 @@ public class MethodModelHelperImpl implements MethodModelHelper {
                 createMethodStringVA.getProperty().getKeywords(), createMethodStringVA.getIsRegex()));
         appendString(parameter, createMethodStringVA.getIsRegex(), createMethodStringVA.getProperty().getType());
 
-        if (!createMethodStringVA.getIsRegex())
+        if (!createMethodStringVA.getIsRegex()) {
             parameter.append(SPACE);
+        }
 
         appendString(parameter, createMethodStringVA.getIsRegex(), createMethodStringVA.getProperty().getName());
 
-        if (!createMethodStringVA.getIndex().equals(createMethodStringVA.getMaxSize()))
+        if (!createMethodStringVA.getIndex().equals(createMethodStringVA.getMaxSize())) {
             appendString(parameter, createMethodStringVA.getIsRegex(), COMMA);
+        }
 
         return parameter.toString();
     }
@@ -249,8 +257,9 @@ public class MethodModelHelperImpl implements MethodModelHelper {
         if (!methodModel.getExceptions().isEmpty()) {
             appendString(method, isRegex, THROWS);
 
-            if (!isRegex)
+            if (!isRegex) {
                 method.append(SPACE);
+            }
         }
 
         for (Integer index = FIRST_INDEX; index < methodModel.getExceptions().size(); index++) {
@@ -274,8 +283,9 @@ public class MethodModelHelperImpl implements MethodModelHelper {
             appendString(exception, createMethodStringVA.getIsRegex(), COMMA);
         }
 
-        if (!createMethodStringVA.getIsRegex())
+        if (!createMethodStringVA.getIsRegex()) {
             exception.append(SPACE);
+        }
 
         return exception.toString();
     }
@@ -291,8 +301,9 @@ public class MethodModelHelperImpl implements MethodModelHelper {
 
         appendString(method, isRegex, methodModel.getBody());
 
-        if (!isRegex)
+        if (!isRegex) {
             method.append(ENTER);
+        }
 
         method.append(CLOSE_CURLY_BRACKETS);
     }

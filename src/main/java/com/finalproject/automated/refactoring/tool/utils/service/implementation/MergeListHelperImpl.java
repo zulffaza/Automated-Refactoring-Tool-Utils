@@ -21,22 +21,36 @@ public class MergeListHelperImpl implements MergeListHelper {
     @Override
     public void mergeListOfString(@NonNull List<String> listToMerge, @NonNull List<Integer> mergeIndex,
                                   @NonNull String delimiter) {
+        mergeStrings(listToMerge, mergeIndex, delimiter);
+        removeMergedStrings(listToMerge, mergeIndex);
+    }
+
+    private void mergeStrings(List<String> listToMerge, List<Integer> mergeIndex, String delimiter) {
         Integer maxSize = mergeIndex.size() - SECOND_INDEX;
 
         for (Integer index = FIRST_INDEX; index < maxSize; index++) {
             Integer startPoint = mergeIndex.get(index);
             Integer endPoint = mergeIndex.get(++index);
 
-            listToMerge.set(startPoint, String.join(delimiter, listToMerge.subList(startPoint, ++endPoint)));
+            String joinedString = String.join(delimiter, listToMerge.subList(startPoint, ++endPoint));
+            listToMerge.set(startPoint, joinedString);
         }
+    }
+
+    private void removeMergedStrings(List<String> listToMerge, List<Integer> mergeIndex) {
+        Integer maxSize = mergeIndex.size() - SECOND_INDEX;
 
         for (Integer index = maxSize; index > FIRST_INDEX; index--) {
             Integer endPoint = mergeIndex.get(index);
             Integer startPoint = mergeIndex.get(--index) + SECOND_INDEX;
 
-            for (Integer count = startPoint; count <= endPoint; count++) {
-                listToMerge.remove(startPoint.intValue());
-            }
+            removeMergedString(listToMerge, startPoint, endPoint);
+        }
+    }
+
+    private void removeMergedString(List<String> listToMerge, Integer startPoint, Integer endPoint) {
+        for (Integer count = startPoint; count <= endPoint; count++) {
+            listToMerge.remove(startPoint.intValue());
         }
     }
 }
