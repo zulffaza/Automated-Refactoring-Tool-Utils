@@ -94,10 +94,6 @@ public class MethodModelHelperImplTest {
     }
 
     private String createExpectedMethodRegex() {
-        return "@GetMapping\\((?:\\s)*value(?:\\s)*=(?:\\s)*\"/\\{filename\\}/change\",(?:\\s)*produces(?:\\s)*=(?:\\s)*MediaType\\.APPLICATION_JSON_VALUE(?:\\s)*\\)(?:\\s)*@SuppressWarnings\\(\\)(?:\\s)*public(?:\\s)*Response<String,(?:\\s)*String>(?:\\s)*changeFilename(?:\\s)*\\((?:\\s)*@RequestParam\\(required(?:\\s)*=(?:\\s)*false,(?:\\s)*defaultValue(?:\\s)*=(?:\\s)*\"null\"\\)(?:\\s)*String(?:\\s)*name(?:\\s)*,(?:\\s)*@RequestParam\\(required(?:\\s)*=(?:\\s)*false,(?:\\s)*defaultValue(?:\\s)*=(?:\\s)*\"\\.java\"\\)(?:\\s)*String(?:\\s)*extension(?:\\s)*,(?:\\s)*@RequestParam\\(required(?:\\s)*=(?:\\s)*false\\)(?:\\s)*String(?:\\s)*user(?:\\s)*\\)(?:\\s)*throws(?:\\s)*Exception(?:\\s)*,(?:\\s)*IOException(?:\\s)*\\{(?:\\s)*try \\{\n" +
-                "            return user \\+ \"\\-\" \\+ name \\+ extension;\n" +
-                "        \\} catch \\(NullPointerException e\\) \\{\n" +
-                "            return null;\n" +
-                "        \\}(?:\\s)*}";
+        return "@GetMapping\\((?:\\s)*value(?:\\s)*=(?:\\s)*\"/\\{filename\\}/change\",(?:\\s)*produces(?:\\s)*=(?:\\s)*MediaType\\.APPLICATION_JSON_VALUE(?:\\s)*\\)(?:\\s)*@SuppressWarnings\\(\\)(?:\\s)*public(?:\\s)*Response<String,(?:\\s)*String>(?:\\s)*changeFilename(?:\\s)*\\((?:\\s)*@RequestParam\\(required(?:\\s)*=(?:\\s)*false,(?:\\s)*defaultValue(?:\\s)*=(?:\\s)*\"null\"\\)(?:\\s)*String(?:\\s)*name(?:\\s)*,(?:\\s)*@RequestParam\\(required(?:\\s)*=(?:\\s)*false,(?:\\s)*defaultValue(?:\\s)*=(?:\\s)*\"\\.java\"\\)(?:\\s)*String(?:\\s)*extension(?:\\s)*,(?:\\s)*@RequestParam\\(required(?:\\s)*=(?:\\s)*false\\)(?:\\s)*String(?:\\s)*user(?:\\s)*\\)(?:\\s)*throws(?:\\s)*Exception(?:\\s)*,(?:\\s)*IOException(?:\\s)*\\{(?:\\s)*try(?:\\s)*\\{(?:\\s)*return(?:\\s)*user(?:\\s)*\\+(?:\\s)*\"\\-\"(?:\\s)*\\+(?:\\s)*name(?:\\s)*\\+(?:\\s)*extension;(?:\\s)*\\}(?:\\s)*catch(?:\\s)*\\(NullPointerException(?:\\s)*e\\)(?:\\s)*\\{(?:\\s)*return(?:\\s)*null;(?:\\s)*\\}(?:\\s)*}";
     }
 }
