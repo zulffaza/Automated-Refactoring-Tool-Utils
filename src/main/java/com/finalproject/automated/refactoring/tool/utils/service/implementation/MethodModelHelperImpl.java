@@ -201,7 +201,7 @@ public class MethodModelHelperImpl implements MethodModelHelper {
 
     private void appendString(StringBuilder method, Boolean isRegex, String string) {
         if (isRegex)
-            method.append(createRegexString(string));
+            method.append(createRegexWithoutWhitespace(string));
         else
             method.append(string);
     }
