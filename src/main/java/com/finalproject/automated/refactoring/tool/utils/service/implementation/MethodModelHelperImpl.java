@@ -24,6 +24,7 @@ public class MethodModelHelperImpl implements MethodModelHelper {
 
     private static final String SPACE = " ";
     private static final String ENTER = "\n";
+    private static final String AT = "@";
     private static final String OPEN_PARENTHESES = "(";
     private static final String CLOSE_PARENTHESES = ")";
     private static final String COMMA = ",";
@@ -147,13 +148,18 @@ public class MethodModelHelperImpl implements MethodModelHelper {
     private String createNonRegexMethodKeyword(CreateMethodStringVA<String> createMethodStringVA) {
         String keyword = createMethodStringVA.getProperty();
 
-        if (!createMethodStringVA.getIndex().equals(createMethodStringVA.getMaxSize())) {
+        if (isKeywordNeedEnter(createMethodStringVA)) {
             keyword += ENTER;
         } else {
             keyword += SPACE;
         }
 
         return keyword;
+    }
+
+    private Boolean isKeywordNeedEnter(CreateMethodStringVA<String> createMethodStringVA) {
+        return !createMethodStringVA.getIndex().equals(createMethodStringVA.getMaxSize()) &&
+                createMethodStringVA.getProperty().startsWith(AT);
     }
 
     private void buildMethodReturnType(MethodModel methodModel, StringBuilder method,
@@ -217,6 +223,21 @@ public class MethodModelHelperImpl implements MethodModelHelper {
 
         parameter.append(buildParameterKeywords(
                 createMethodStringVA.getProperty().getKeywords(), createMethodStringVA.getIsRegex()));
+        createMethodParameterTypeAndName(createMethodStringVA, parameter);
+
+        if (!createMethodStringVA.getIndex().equals(createMethodStringVA.getMaxSize())) {
+            appendString(parameter, createMethodStringVA.getIsRegex(), COMMA);
+
+            if (!createMethodStringVA.getIsRegex()) {
+                parameter.append(SPACE);
+            }
+        }
+
+        return parameter.toString();
+    }
+
+    private void createMethodParameterTypeAndName(CreateMethodStringVA<PropertyModel> createMethodStringVA,
+                                                  StringBuilder parameter) {
         appendString(parameter, createMethodStringVA.getIsRegex(), createMethodStringVA.getProperty().getType());
 
         if (!createMethodStringVA.getIsRegex()) {
@@ -224,12 +245,6 @@ public class MethodModelHelperImpl implements MethodModelHelper {
         }
 
         appendString(parameter, createMethodStringVA.getIsRegex(), createMethodStringVA.getProperty().getName());
-
-        if (!createMethodStringVA.getIndex().equals(createMethodStringVA.getMaxSize())) {
-            appendString(parameter, createMethodStringVA.getIsRegex(), COMMA);
-        }
-
-        return parameter.toString();
     }
 
     private String buildParameterKeywords(List<String> keywords, Boolean isRegex) {
