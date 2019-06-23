@@ -84,7 +84,7 @@ public class MethodModelHelperImplTest {
     private String createExpectedMethodString() {
         return "@GetMapping( value = \"/{filename}/change\", produces = MediaType.APPLICATION_JSON_VALUE )\n" +
                 "@SuppressWarnings()\n" +
-                "public Response<String, String> changeFilename(@RequestParam(required = false, defaultValue = \"null\") String name,@RequestParam(required = false, defaultValue = \".java\") String extension,@RequestParam(required = false) String user) throws Exception, IOException {\n" +
+                "public Response<String, String> changeFilename(@RequestParam(required = false, defaultValue = \"null\") String name, @RequestParam(required = false, defaultValue = \".java\") String extension, @RequestParam(required = false) String user) throws Exception, IOException {\n" +
                 "\ttry {\n" +
                 "            return user + \"-\" + name + extension;\n" +
                 "        } catch (NullPointerException e) {\n" +
