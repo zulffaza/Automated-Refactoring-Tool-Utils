@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 /**
@@ -32,7 +33,7 @@ public class ReplaceFileHelperImpl implements ReplaceFileHelper {
         try {
             String fileContent = getFileContent(filePath);
             String newFileContent = fileContent.replaceAll(replaceFileVA.getTarget(),
-                    replaceFileVA.getReplacement());
+                    Matcher.quoteReplacement(replaceFileVA.getReplacement()));
 
             replaceContent(filePath, newFileContent);
         } catch (IOException e) {
