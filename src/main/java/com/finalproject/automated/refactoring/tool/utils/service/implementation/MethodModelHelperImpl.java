@@ -50,6 +50,7 @@ public class MethodModelHelperImpl implements MethodModelHelper {
     private static final Integer ONE = 1;
 
     private static final List<String> REGEX_KEYWORDS = Arrays.asList(
+            ESCAPE,
             OPEN_PARENTHESES,
             CLOSE_PARENTHESES,
             PLUS,
