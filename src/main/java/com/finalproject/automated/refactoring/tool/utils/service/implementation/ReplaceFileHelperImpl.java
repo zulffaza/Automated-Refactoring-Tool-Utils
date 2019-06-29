@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -32,11 +33,10 @@ public class ReplaceFileHelperImpl implements ReplaceFileHelper {
     private Boolean doReplaceFile(Path filePath, ReplaceFileVA replaceFileVA) {
         try {
             String fileContent = getFileContent(filePath);
-            String newFileContent = fileContent.replaceAll(replaceFileVA.getTarget(),
-                    Matcher.quoteReplacement(replaceFileVA.getReplacement()));
+            String newFileContent = createNewFileContent(fileContent, replaceFileVA);
 
             replaceContent(filePath, newFileContent);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return Boolean.FALSE;
         }
 
@@ -46,6 +46,19 @@ public class ReplaceFileHelperImpl implements ReplaceFileHelper {
     private String getFileContent(Path filePath) throws IOException {
         return Files.lines(filePath)
                 .collect(Collectors.joining(NEW_LINE_DELIMITER));
+    }
+
+    private String createNewFileContent(String fileContent,
+                                        ReplaceFileVA replaceFileVA) throws Exception {
+        String quoteReplacement = Matcher.quoteReplacement(replaceFileVA.getReplacement());
+        Matcher matcher = Pattern.compile(replaceFileVA.getTarget())
+                .matcher(fileContent);
+
+        if (matcher.find()) {
+            return matcher.replaceAll(quoteReplacement);
+        } else {
+            throw new Exception();
+        }
     }
 
     private void replaceContent(Path filePath, String newFileContent) throws IOException {
