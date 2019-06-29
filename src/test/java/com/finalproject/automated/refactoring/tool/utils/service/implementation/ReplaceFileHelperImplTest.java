@@ -52,6 +52,12 @@ public class ReplaceFileHelperImplTest {
     }
 
     @Test
+    public void replaceFile_failed_targetNotFound() throws IOException {
+        Files.write(path, getFalseFileContent().getBytes());
+        assertFalse(replaceFileHelper.replaceFile(replaceFileVA));
+    }
+
+    @Test
     public void replaceFile_failed_fileNotFound() throws IOException {
         Files.delete(path);
         assertFalse(replaceFileHelper.replaceFile(replaceFileVA));
@@ -104,5 +110,9 @@ public class ReplaceFileHelperImplTest {
                 "\n" +
                 "    Hello World\n" +
                 "}";
+    }
+
+    private String getFalseFileContent() {
+        return "False file content";
     }
 }
