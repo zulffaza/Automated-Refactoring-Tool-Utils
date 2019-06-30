@@ -44,7 +44,7 @@ public class VariableHelperImpl implements VariableHelper {
     private static final String POINT = ".";
     private static final String LESS_THAN = "<";
     private static final String GREATER_THAN = ">";
-    private static final String COMMA_SEPARATOR = ", ";
+    private static final String COMMA_SEPARATOR = ",";
     private static final String OPEN_SQUARE_BRACKETS = "[";
     private static final String CLOSE_SQUARE_BRACKETS = "]";
 
@@ -208,7 +208,8 @@ public class VariableHelperImpl implements VariableHelper {
 
     private Boolean isCalledField(String variable) {
         String replacePoint = variable.replace(POINT, EMPTY_STRING);
-        return variable.contains(POINT) && !replacePoint.isEmpty() && isClassName(replacePoint);
+        return variable.contains(POINT) && !replacePoint.isEmpty() &&
+                (isClassName(replacePoint) || !isNotContainThanOperators(variable));
     }
 
     private void doNormalizeCalledMethod(List<String> split) {
@@ -325,6 +326,7 @@ public class VariableHelperImpl implements VariableHelper {
 
         beautifyGenerics(variables, normalizeGenericsVA.getMergeIndex());
         mergeListHelper.mergeListOfString(variables, normalizeGenericsVA.getMergeIndex(), EMPTY_STRING);
+        normalizeGenericsCalls(variables);
     }
 
     private void checkGenerics(Integer index, NormalizeGenericsVA normalizeGenericsVA) {
@@ -403,15 +405,53 @@ public class VariableHelperImpl implements VariableHelper {
             String variable = variables.get(index);
             String nextVariable = variables.get(index + SECOND_INDEX);
 
-            if (isNeedCommaSeparator(variable, nextVariable)) {
-                variables.set(index, variable + COMMA_SEPARATOR);
-            }
+            variable = beautifyGenericsVariable(variable, nextVariable);
+            variables.set(index, variable);
         }
+    }
+
+    private String beautifyGenericsVariable(String variable, String nextVariable) {
+        if (isNeedCommaSeparator(variable, nextVariable)) {
+            variable += COMMA_SEPARATOR;
+        }
+
+        if (isNeedSpace(variable, nextVariable)) {
+            variable += SPACE_DELIMITER;
+        }
+
+        return variable;
     }
 
     private Boolean isNeedCommaSeparator(String variable, String nextVariable) {
         return (isClassName(variable) || variable.contains(GREATER_THAN)) &&
-                !nextVariable.contains(LESS_THAN) && !nextVariable.contains(GREATER_THAN);
+                isNotContainThanOperators(nextVariable);
+    }
+
+    private Boolean isNotContainThanOperators(String variable) {
+        return !variable.contains(LESS_THAN) && !variable.contains(GREATER_THAN);
+    }
+
+    private Boolean isNeedSpace(String variable, String nextVariable) {
+        return isNotContainThanOperators(variable) && isNotContainThanOperators(nextVariable);
+    }
+
+    private void normalizeGenericsCalls(List<String> variables) {
+        Integer maxSize = variables.size() - SECOND_INDEX;
+
+        for (Integer index = FIRST_INDEX; index < maxSize; index++) {
+            String variable = variables.get(index);
+            String nextVariable = variables.get(index + SECOND_INDEX);
+
+            if (isGenericsCalls(variable, nextVariable)) {
+                variables.set(index, variable + nextVariable);
+                variables.remove(index + SECOND_INDEX);
+                maxSize--;
+            }
+        }
+    }
+
+    private Boolean isGenericsCalls(String variable, String nextVariable) {
+        return isClassName(variable) && nextVariable.startsWith(POINT);
     }
 
     private Boolean isNotString(String variable) {
