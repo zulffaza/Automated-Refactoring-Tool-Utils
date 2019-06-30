@@ -139,13 +139,18 @@ public class VariableHelperImplTest {
     private void mockingNormalizeForInnerClassStatement() {
         doNothing()
                 .when(mergeListHelper)
-                .mergeListOfString(eq(createInnerClassStatementList()),
+                .mergeListOfString(eq(createExpectedCalledMethodInnerClassStatementList()),
                         eq(new ArrayList<>()), eq(SPACE_DELIMITER));
 
         doNothing()
                 .when(mergeListHelper)
                 .mergeListOfString(eq(createInnerClassStatementList()),
                         eq(new ArrayList<>()), eq(EMPTY_STRING));
+
+        doAnswer(this::mockNormalizeGenericsInnerClassStatement)
+                .when(mergeListHelper)
+                .mergeListOfString(eq(createInnerClassStatementList()),
+                        eq(createInnerClassStatementMergeIndex()), eq(EMPTY_STRING));
     }
 
     private void mockingNormalizeForMethodReferenceStatement() {
@@ -190,7 +195,7 @@ public class VariableHelperImplTest {
     }
 
     private String createInnerClassStatement() {
-        return "Sort.Direction[] direction = new Sort.Direction[directionSize];";
+        return "Sort<?>.Direction[] direction = new Sort.Direction[directionSize];";
     }
 
     private String createMethodReferenceStatement() {
@@ -215,8 +220,15 @@ public class VariableHelperImplTest {
 
     private List<String> createInnerClassStatementList() {
         List<String> innerClassStatementList = Arrays.asList(
-                "Sort.Direction[]", "direction", "=", "new",
+                "Sort", "<", "?", ">", ".Direction[]", "direction", "=", "new",
                 "Sort.Direction[directionSize]"
+        );
+        return new ArrayList<>(innerClassStatementList);
+    }
+
+    private List<String> createExpectedCalledMethodInnerClassStatementList() {
+        List<String> innerClassStatementList = Arrays.asList(
+                "Sort", "<", "?", ">", ".Direction[]"
         );
         return new ArrayList<>(innerClassStatementList);
     }
@@ -257,6 +269,15 @@ public class VariableHelperImplTest {
         return null;
     }
 
+    private Object mockNormalizeGenericsInnerClassStatement(InvocationOnMock invocationOnMock) {
+        List<String> genericsStatementList = invocationOnMock.getArgument(0);
+
+        genericsStatementList.clear();
+        genericsStatementList.addAll(createExpectedGenericsInnerClassStatementList());
+
+        return null;
+    }
+
     private Object mockNormalizeKeywordsCalledMethodMethodReferenceStatement(InvocationOnMock invocationOnMock) {
         List<String> genericsStatementList = invocationOnMock.getArgument(0);
 
@@ -274,6 +295,11 @@ public class VariableHelperImplTest {
     private List<Integer> createGenericsStatementMergeIndex() {
         List<Integer> genericsStatementMergeIndex = Arrays.asList(0, 6, 10, 12);
         return new ArrayList<>(genericsStatementMergeIndex);
+    }
+
+    private List<Integer> createInnerClassStatementMergeIndex() {
+        List<Integer> innerClassStatementMergeIndex = Arrays.asList(0, 3);
+        return new ArrayList<>(innerClassStatementMergeIndex);
     }
 
     private List<Integer> createMethodReferenceStatementMergeIndex() {
@@ -305,6 +331,22 @@ public class VariableHelperImplTest {
         return new ArrayList<>(genericsStatementList);
     }
 
+    private List<String> createExpectedGenericsInnerClassStatementList() {
+        List<String> genericsInnerClassStatementList = Arrays.asList(
+                "Sort<?>", ".Direction[]", "direction", "=", "new",
+                "Sort.Direction[directionSize]"
+        );
+        return new ArrayList<>(genericsInnerClassStatementList);
+    }
+
+    private List<String> createExpectedGenericsInnerClassNormalStatementList() {
+        List<String> genericsInnerClassStatementList = Arrays.asList(
+                "Sort<?>.Direction[]", "direction", "=", "new",
+                "Sort.Direction[directionSize]"
+        );
+        return new ArrayList<>(genericsInnerClassStatementList);
+    }
+
     private List<String> createNormalizeKeywordsCalledMethodExpectedMethodReferenceStatementList() {
         List<String> methodReferenceStatementList = Arrays.asList(
                 "this.variables", ".stream(", ")",
@@ -323,7 +365,7 @@ public class VariableHelperImplTest {
 
     private List<String> createExpectedInnerClassStatementVariables() {
         List<String> innerClassStatementVariables = Arrays.asList(
-                "Sort.Direction[]", "direction", "=", "directionSize"
+                "Sort<?>.Direction[]", "direction", "=", "directionSize"
         );
         return new ArrayList<>(innerClassStatementVariables);
     }
@@ -354,10 +396,12 @@ public class VariableHelperImplTest {
     }
 
     private void verifyNormalizeForInnerClassStatement() {
-        verify(mergeListHelper).mergeListOfString(eq(createInnerClassStatementList()),
-                eq(new ArrayList<>()), eq(SPACE_DELIMITER));
-        verify(mergeListHelper).mergeListOfString(eq(createInnerClassStatementList()),
+        verify(mergeListHelper).mergeListOfString(eq(createExpectedCalledMethodInnerClassStatementList()),
                 eq(new ArrayList<>()), eq(EMPTY_STRING));
+        verify(mergeListHelper).mergeListOfString(eq(createExpectedGenericsInnerClassNormalStatementList()),
+                eq(new ArrayList<>()), eq(SPACE_DELIMITER));
+        verify(mergeListHelper).mergeListOfString(eq(createExpectedGenericsInnerClassNormalStatementList()),
+                eq(createInnerClassStatementMergeIndex()), eq(EMPTY_STRING));
         verifyNoMoreInteractions(mergeListHelper);
     }
 

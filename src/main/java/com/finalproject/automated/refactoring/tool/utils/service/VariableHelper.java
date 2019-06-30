@@ -15,7 +15,7 @@ public interface VariableHelper {
 
     String UNUSED_CHARACTERS_REGEX = "(?:[,:;])+";
     String OPERATORS_CHARACTERS_REGEX = "(?:[+\\-*/%=!<>&|^~])+";
-    String VARIABLE_NAME_REGEX = "^(?:[a-zA-Z_$])(?:[a-zA-Z0-9_$<>\\[\\].,\\s])*";
+    String VARIABLE_NAME_REGEX = "^(?:[a-zA-Z_$])(?:[a-zA-Z0-9_$<>\\[\\].,?\\s])*";
 
     List<String> KEYWORDS = Arrays.asList(
             "class",
