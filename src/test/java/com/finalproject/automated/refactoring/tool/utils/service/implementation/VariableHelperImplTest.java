@@ -195,7 +195,7 @@ public class VariableHelperImplTest {
     }
 
     private String createInnerClassStatement() {
-        return "Sort<?>.Direction[] direction = new Sort.Direction[directionSize];";
+        return "Sort<?>.Direction[][] direction = new Sort.Direction[directionSize][durationSize];";
     }
 
     private String createMethodReferenceStatement() {
@@ -220,15 +220,15 @@ public class VariableHelperImplTest {
 
     private List<String> createInnerClassStatementList() {
         List<String> innerClassStatementList = Arrays.asList(
-                "Sort", "<", "?", ">", ".Direction[]", "direction", "=", "new",
-                "Sort.Direction[directionSize]"
+                "Sort", "<", "?", ">", ".Direction[][]", "direction", "=", "new",
+                "Sort.Direction[directionSize][durationSize]"
         );
         return new ArrayList<>(innerClassStatementList);
     }
 
     private List<String> createExpectedCalledMethodInnerClassStatementList() {
         List<String> innerClassStatementList = Arrays.asList(
-                "Sort", "<", "?", ">", ".Direction[]"
+                "Sort", "<", "?", ">", ".Direction[][]"
         );
         return new ArrayList<>(innerClassStatementList);
     }
@@ -333,16 +333,16 @@ public class VariableHelperImplTest {
 
     private List<String> createExpectedGenericsInnerClassStatementList() {
         List<String> genericsInnerClassStatementList = Arrays.asList(
-                "Sort<?>", ".Direction[]", "direction", "=", "new",
-                "Sort.Direction[directionSize]"
+                "Sort<?>", ".Direction[][]", "direction", "=", "new",
+                "Sort.Direction[directionSize][durationSize]"
         );
         return new ArrayList<>(genericsInnerClassStatementList);
     }
 
     private List<String> createExpectedGenericsInnerClassNormalStatementList() {
         List<String> genericsInnerClassStatementList = Arrays.asList(
-                "Sort<?>.Direction[]", "direction", "=", "new",
-                "Sort.Direction[directionSize]"
+                "Sort<?>.Direction[][]", "direction", "=", "new",
+                "Sort.Direction[directionSize][durationSize]"
         );
         return new ArrayList<>(genericsInnerClassStatementList);
     }
@@ -365,7 +365,8 @@ public class VariableHelperImplTest {
 
     private List<String> createExpectedInnerClassStatementVariables() {
         List<String> innerClassStatementVariables = Arrays.asList(
-                "Sort<?>.Direction[]", "direction", "=", "directionSize"
+                "Sort<?>.Direction[][]", "direction", "=",
+                "directionSize", "durationSize"
         );
         return new ArrayList<>(innerClassStatementVariables);
     }
