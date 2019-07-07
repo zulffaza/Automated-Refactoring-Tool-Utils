@@ -478,9 +478,33 @@ public class VariableHelperImpl implements VariableHelper {
     }
 
     private void undoSplitArrayVariables(List<String> split) {
+        Integer lastIndex = getLastArrayIndex(split);
+
         split.set(FIRST_INDEX, String.join(OPEN_SQUARE_BRACKETS,
-                split.get(FIRST_INDEX), split.get(SECOND_INDEX)));
-        split.remove(SECOND_INDEX.intValue());
+                split.subList(FIRST_INDEX, lastIndex)));
+        split.removeAll(split.subList(SECOND_INDEX, lastIndex));
+    }
+
+    private Integer getLastArrayIndex(List<String> split) {
+        Integer index;
+
+        for (index = SECOND_INDEX; index < split.size(); index++) {
+            String variable = split.get(index);
+
+            if (!variable.equals(CLOSE_SQUARE_BRACKETS)) {
+                break;
+            }
+        }
+
+        return normalizeLastArrayIndex(index, split.size());
+    }
+
+    private Integer normalizeLastArrayIndex(Integer index, Integer maxIndex) {
+        if (index < maxIndex) {
+            index++;
+        }
+
+        return index;
     }
 
     private void removeFirstIndex(List<String> split) {
